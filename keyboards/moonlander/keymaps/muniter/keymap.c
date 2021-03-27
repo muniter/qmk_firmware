@@ -32,11 +32,11 @@ enum custom_keycodes {
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [0] = LAYOUT_moonlander(
     KC_GRAVE,       KC_1,           KC_2,           KC_3,           KC_4,           KC_5,           KC_DELETE,                                      WEBUSB_PAIR,    KC_6,           KC_7,           KC_8,           KC_9,           KC_0,           OSM(MOD_RALT),  
-    LGUI_T(KC_TAB), KC_Q,           KC_W,           KC_E,           KC_R,           KC_T,           KC_DELETE,                                      KC_INSERT,      KC_Y,           KC_U,           KC_I,           KC_O,           KC_P,           RGUI_T(KC_BSLASH),
+    LGUI_T(KC_TAB), KC_Q,           LT(4,KC_W),           KC_E,           KC_R,           KC_T,           KC_DELETE,                                      KC_INSERT,      KC_Y,           KC_U,           KC_I,           KC_O,           KC_P,           RGUI_T(KC_BSLASH),
     KC_ESCAPE,      KC_A,           KC_S,           KC_D,           KC_F,           KC_G,           KC_BSPACE,                                                                      KC_PAUSE,       KC_H,           KC_J,           KC_K,           KC_L,           KC_SCOLON,      KC_QUOTE,       
     OSM(MOD_RSFT),  KC_Z,           KC_X,           KC_C,           KC_V,           KC_B,                                           KC_N,           KC_M,           KC_COMMA,       KC_DOT,         KC_SLASH,       OSM(MOD_RSFT),  
     KC_LCTRL,       KC_LGUI,        KC_LALT,        OSL(7),         LT(3,KC_SPACE), LSFT_T(KC_PSCREEN),                                                                                                RSFT_T(KC_APPLICATION),LT(3,KC_ENTER), LT(2,KC_NO),    KC_LBRACKET,    KC_RBRACKET,    KC_RCTRL,       
-    OSL(1),         KC_LEAD,KC_TRANSPARENT,                 KC_TRANSPARENT, LALT_T(KC_BSPACE),LCTL_T(KC_SPACE)
+    OSL(1),         OSM(MOD_RSFT), KC_LEAD,                 KC_TRANSPARENT, LALT_T(KC_BSPACE),LCTL_T(KC_SPACE)
   ),
 
   /* Symbols layer */

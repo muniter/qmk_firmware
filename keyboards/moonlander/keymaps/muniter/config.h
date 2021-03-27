@@ -18,6 +18,8 @@
 #define RGB_MATRIX_STARTUP_SPD 60
 // Default mode for rgb effects
 #define RGB_MATRIX_STARTUP_MODE RGB_MATRIX_TYPING_HEATMAP
+// RGB off when PC is sleeping
+#define RGBLIGHT_SLEEP
 
 #define LEADER_TIMEOUT 300
 #define LEADER_PER_KEY_TIMING
