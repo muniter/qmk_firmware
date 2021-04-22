@@ -245,9 +245,6 @@ void matrix_scan_user(void) {
     /*   unregister_code(KC_S); */
     /* } */
     // email
-    SEQ_TWO_KEYS(KC_E, KC_M) {
-      SEND_STRING("graulopezjavier@gmail.com");
-    }
     SEQ_TWO_KEYS(KC_A, KC_S) {
       register_code(KC_LGUI);
       register_code(KC_S);
