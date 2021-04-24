@@ -29,3 +29,6 @@
 #define LEADER_PER_KEY_TIMING
 // Leader sends exact keycodes
 #define LEADER_KEY_STRICT_KEY_PROCESSING
+
+// Combos
+#define COMBO_COUNT 2
