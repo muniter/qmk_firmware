@@ -6,3 +6,5 @@ NO_USB_STARTUP_CHECK = yes
 DYNAMIC_MACRO_ENABLE = yes
 # Locking keys
 KEY_LOCK_ENABLE = yes
+# Enable combo
+COMBO_ENABLE = yes

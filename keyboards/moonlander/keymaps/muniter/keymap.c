@@ -24,6 +24,9 @@
 #define _SE 4
 #define _AC 5
 
+// My special thumb cluster shift
+#define OSFT OSM(MOD_RSFT)
+
 // Left-hand home row mods
 #define HOME_A LGUI_T(KC_A)
 #define HOME_S LALT_T(KC_S)
@@ -53,7 +56,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_ESCAPE,      HOME_A,         HOME_S,         HOME_D,         HOME_F,         KC_G,           KC_BSPACE,                                      KC_INSERT,      KC_H,           HOME_J,         HOME_K,         HOME_L,         HOME_SCLN,      KC_QUOTE,
     KC_NO,          KC_Z,           KC_X,           KC_C,           KC_V,           KC_B,                                                                           KC_N,           KC_M,           KC_COMMA,       KC_DOT,         KC_SLASH,       KC_NO,
     KC_LCTRL,       KC_LGUI,        KC_LALT,        OSL(_AC),       LT(_NA,KC_SPACE),               KC_PSCREEN,                                 RSFT_T(KC_APPLICATION),         LT(_NA,KC_ENTER), LT(_SE,KC_NO),    KC_LBRACKET,    KC_RBRACKET,    KC_RCTRL,
-                                                                    OSL(_SY),         OSM(MOD_RSFT),         KC_LEAD,                                        KC_NO,          KC_BSPACE,      LT(_NU,KC_SPACE)),
+                                                                    OSL(_SY),         OSFT,         KC_LEAD,                                        KC_NO,          KC_BSPACE,      LT(_NU,KC_SPACE)),
   /* Symbols layer */
   [_SY] = LAYOUT_moonlander(
     _______, KC_F1,          KC_F2,          KC_F3,          KC_F4,          KC_F5,          KC_F11,                                  KC_F12,         KC_F6,          KC_F7,          KC_F8,          KC_F9,          KC_F10,         TO(_BS),
@@ -107,6 +110,9 @@ static bool osm_shift_held = false;
 static bool turned_on_symbols = false;
 // If any symbol was used while turned on by the logic
 static bool used_a_symbol = false;
+// Keep track of the mod states
+uint8_t mod_state;
+uint8_t oneshot_mod_state;
 // Timer to track wether to space or not
 static uint16_t my_space_timer;
 
@@ -115,11 +121,15 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (record->event.pressed && turned_on_symbols) {
         used_a_symbol = true;
     }
-
     switch (keycode) {
         case LT(_NU,KC_SPACE):
             if (record-> event.pressed && osm_shift_held) {
                 my_space_timer = timer_read();
+                // Save the mods and clear them
+                mod_state = get_mods();
+                oneshot_mod_state = get_oneshot_mods();
+                clear_mods();
+                // Turn on thelayer
                 layer_on(_SY);
                 turned_on_symbols = true;
                 return false;
@@ -128,18 +138,30 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 if (timer_elapsed(my_space_timer) < TAPPING_TERM && !used_a_symbol) {
                     tap_code(KC_SPACE);
                 }
-                layer_off(_SY);
                 turned_on_symbols = false;
                 used_a_symbol = false;
+                layer_off(_SY);
+                // Restore the mods after removing the layer if shift is being held still
+                if (osm_shift_held) {
+                    set_mods(mod_state);
+                    set_oneshot_mods(mod_state);
+                }
                 return false;
             }
             return true;
-        case OSM(MOD_RSFT):
+        case OSFT:
             // Set the variable when the key is held
             if (record-> event.pressed) {
                 osm_shift_held = true;
             } else {
                 osm_shift_held = false;
+            }
+            return true;
+        case KC_PSCREEN:
+            // Combo OSFT and KC_PSCREEN for caps lock
+            if (record-> event.pressed && osm_shift_held) {
+                tap_code(KC_CAPS);
+                return false;
             }
             return true;
     }
@@ -169,6 +191,44 @@ bool get_tapping_force_hold(uint16_t keycode, keyrecord_t *record) {
             return true;
         default:
             return false;
+    }
+}
+// Combo functionality
+/* enum combo_events { */
+/*     CAPS_LOCK */
+/* }; */
+
+/* // Turn on capslock when pressed with print screen */
+/* const uint16_t PROGMEM capslock_combo[] = {OSFT, KC_PSCREEN, COMBO_END}; */
+
+/* combo_t key_combos[COMBO_COUNT] = { */
+/*   [CAPS_LOCK] = COMBO_ACTION(capslock_combo) */
+/* }; */
+
+/* void process_combo_event(uint16_t combo_index, bool pressed) { */
+/*     switch(combo_index) { */
+/*         case CAPS_LOCK: */
+/*           if (pressed) { */
+/*               tap_code(KC_CAPS); */
+/*           } */
+/*           break; */
+/*       } */
+/* } */
+
+// Leader functionality
+LEADER_EXTERNS();
+void matrix_scan_user(void) {
+    // Documentation https://beta.docs.qmk.fm/using-qmk/advanced-keycodes/feature_leader_key
+    LEADER_DICTIONARY() {
+        leading = false;
+        leader_end();
+
+        // Reload sway
+        SEQ_TWO_KEYS(HOME_S, KC_R) {
+            register_code(KC_LGUI);
+            tap_code(KC_F2);
+            unregister_code(KC_LGUI);
+        }
     }
 }
 
@@ -238,26 +298,3 @@ void rgb_matrix_indicators_user(void) {
             break;
     }
 }
-
-LEADER_EXTERNS();
-
-void matrix_scan_user(void) {
-    LEADER_DICTIONARY() {
-        leading = false;
-        leader_end();
-
-        /* SEQ_ONE_KEY(KC_F) { */
-        /*   register_code(KC_S); */
-        /*   unregister_code(KC_S); */
-        /* } */
-        // email
-        SEQ_TWO_KEYS(KC_A, KC_S) {
-            register_code(KC_LGUI);
-            register_code(KC_S);
-            unregister_code(KC_S);
-            unregister_code(KC_LGUI);
-        }
-    }
-}
-
-
