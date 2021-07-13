@@ -7,4 +7,7 @@ DYNAMIC_MACRO_ENABLE = yes
 # Locking keys
 KEY_LOCK_ENABLE = yes
 # Enable combo
-COMBO_ENABLE = yes
+# COMBO_ENABLE = yes
+# Console to collect data
+CONSOLE_ENABLE = yes
+

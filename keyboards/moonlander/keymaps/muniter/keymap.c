@@ -15,6 +15,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+// For keylogging
+#ifdef CONSOLE_ENABLE
+#include "print.h"
+#endif
 
 // Layer names
 #define _BS 0
@@ -26,6 +30,7 @@
 
 // My special thumb cluster shift
 #define OSFT OSM(MOD_RSFT)
+#define ACCE_G LT(_AC,KC_G)
 
 // Left-hand home row mods
 #define HOME_A LGUI_T(KC_A)
@@ -47,15 +52,14 @@ enum custom_keycodes {
   ES_RSPC,
 };
 
-
-
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [_BS] = LAYOUT_moonlander(
-    KC_GRAVE,       KC_1,           KC_2,           KC_3,           KC_4,           KC_5,           KC_DELETE,                                      WEBUSB_PAIR,    KC_6,           KC_7,           KC_8,           KC_9,           KC_0,           OSM(MOD_RALT),  
-    KC_TAB,         KC_Q,           KC_W,           KC_E,           KC_R,           KC_T,           KC_DELETE,                                      KC_PAUSE,       KC_Y,           KC_U,           KC_I,           KC_O,           KC_P,           KC_BSLASH,
-    KC_ESCAPE,      HOME_A,         HOME_S,         HOME_D,         HOME_F,         KC_G,           KC_BSPACE,                                      KC_INSERT,      KC_H,           HOME_J,         HOME_K,         HOME_L,         HOME_SCLN,      KC_QUOTE,
+    /* KC_GRAVE,       KC_1,           KC_2,           KC_3,           KC_4,           KC_5,           KC_DELETE,                                      WEBUSB_PAIR,    KC_6,           KC_7,           KC_8,           KC_9,           KC_0,           OSM(MOD_RALT), */
+    KC_NO,          KC_NO,           KC_NO,           KC_NO,           KC_NO,           KC_NO,           KC_NO,                                      KC_NO,    KC_NO,           KC_NO,           KC_NO,           KC_NO,           KC_NO,           OSM(MOD_RALT),
+    KC_NO,          KC_Q,           KC_W,           KC_E,           KC_R,           KC_T,           KC_DELETE,                                      KC_PAUSE,       KC_Y,           KC_U,           KC_I,           KC_O,           KC_P,           KC_BSLASH,
+    KC_ESC,      HOME_A,         HOME_S,         HOME_D,         HOME_F,         ACCE_G,         KC_BSPACE,                                      KC_INSERT,      KC_H,           HOME_J,         HOME_K,         HOME_L,         HOME_SCLN,      KC_QUOTE,
     KC_NO,          KC_Z,           KC_X,           KC_C,           KC_V,           KC_B,                                                                           KC_N,           KC_M,           KC_COMMA,       KC_DOT,         KC_SLASH,       KC_NO,
-    KC_LCTRL,       KC_LGUI,        KC_LALT,        OSL(_AC),       LT(_NA,KC_SPACE),               KC_PSCREEN,                                 RSFT_T(KC_APPLICATION),         LT(_NA,KC_ENTER), LT(_SE,KC_NO),    KC_LBRACKET,    KC_RBRACKET,    KC_RCTRL,
+    KC_LEAD,        KC_LGUI,        KC_LALT,        OSL(_AC),       LT(_NA,KC_SPACE),               KC_PSCREEN,                                 RSFT_T(KC_APPLICATION),         LT(_NA,KC_ENTER), LT(_SE,KC_NO),    KC_LBRACKET,    KC_RBRACKET,    KC_RCTRL,
                                                                     OSL(_SY),         OSFT,         KC_LEAD,                                        KC_NO,          KC_BSPACE,      LT(_NU,KC_SPACE)),
   /* Symbols layer */
   [_SY] = LAYOUT_moonlander(
@@ -88,10 +92,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [_NU] = LAYOUT_moonlander(
     _______, _______, _______, _______, _______, _______, _______,                                 _______, _______, KC_TAB,         KC_SLASH,       KC_ASTR,        KC_EQUAL,       TO(_BS),          
     _______, _______, _______, _______, _______, _______, _______,                                 _______, _______, KC_7,           KC_8,           KC_9,           KC_MINUS,       _______, 
-    _______, _______, _______,           _______,           _______, _______, _______,                                 _______, _______, KC_4,           KC_5,           KC_6,           KC_PLUS,        _______, 
-    _______, _______,    _______,           _______,           _______, _______,                                 KC_0,           KC_1,           KC_2,           KC_3,           KC_DOT,         _______, 
-    _______, _______,           _______,           _______,           _______, _______,                                                                                                 _______, _______, _______, _______, _______, _______, 
-    _______, _______, _______,                 _______, _______, _______
+    _______, KC_ESC,  _______, _______, KC_TAB,  _______, _______,                            _______, _______,      LCTL_T(KC_4),   LSFT_T(KC_5),   LALT_T(KC_6),   LGUI_T(KC_PLUS),_______, 
+    _______, _______, _______, _______, _______, _______,                                 KC_0,           KC_1,           KC_2,           KC_3,           KC_DOT,         _______, 
+    _______, _______, _______, _______, _______, _______,                                                                                                 _______, _______, _______, _______, _______, _______, 
+    _______, _______, _______, _______, _______, _______
   ),
   /* Spanish Accents layer */
   [_AC] = LAYOUT_moonlander(
@@ -117,6 +121,11 @@ uint8_t oneshot_mod_state;
 static uint16_t my_space_timer;
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    /* #ifdef CONSOLE_ENABLE */
+    /*     if (record->event.pressed) { */
+    /*         uprintf("0x%04X,%u,%u,%u\n", keycode, record->event.key.row, record->event.key.col, get_highest_layer(layer_state)); */
+    /*     } */
+    /* #endif */
     //If pressed any key when the symbol layer was activated save it to not send the space
     if (record->event.pressed && turned_on_symbols) {
         used_a_symbol = true;
@@ -194,15 +203,15 @@ bool get_tapping_force_hold(uint16_t keycode, keyrecord_t *record) {
     }
 }
 // Combo functionality
-/* enum combo_events { */
-/*     CAPS_LOCK */
-/* }; */
+enum combos {
+    JF_ESC
+};
 
-/* // Turn on capslock when pressed with print screen */
-/* const uint16_t PROGMEM capslock_combo[] = {OSFT, KC_PSCREEN, COMBO_END}; */
+// Turn on capslock when pressed with print screen
+/* const uint16_t PROGMEM jf_esc_combo[] = {HOME_F, HOME_J, COMBO_END}; */
 
 /* combo_t key_combos[COMBO_COUNT] = { */
-/*   [CAPS_LOCK] = COMBO_ACTION(capslock_combo) */
+/*   [JF_ESC] = COMBO(jf_esc_combo, KC_ESC) */
 /* }; */
 
 /* void process_combo_event(uint16_t combo_index, bool pressed) { */
@@ -228,6 +237,12 @@ void matrix_scan_user(void) {
             register_code(KC_LGUI);
             tap_code(KC_F2);
             unregister_code(KC_LGUI);
+        }
+        SEQ_TWO_KEYS(KC_E, KC_M) {
+            SEND_STRING("graulopezjavier@gmail.com");
+        }
+        SEQ_TWO_KEYS(KC_U, HOME_S) {
+            SEND_STRING("muniter");
         }
     }
 }

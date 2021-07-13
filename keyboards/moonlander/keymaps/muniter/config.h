@@ -31,6 +31,6 @@
 #define LEADER_KEY_STRICT_KEY_PROCESSING
 
 // Combos
-#define COMBO_COUNT 1
+/* #define COMBO_COUNT 1 */
 // The idea is to chord thigns fast.
-#define COMBO_TERM 70
+/* #define COMBO_TERM 50 */
